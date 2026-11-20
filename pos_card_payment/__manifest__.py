@@ -1,6 +1,7 @@
 {
     'name': 'POS Card Payment',
     'version': '19.0.1.0.0',
+    'author': 'Quanam',
     'license': 'OPL-1',
     'category': 'Point of Sale',
     'summary': 'Provider-agnostic card reading for the point of sale',
