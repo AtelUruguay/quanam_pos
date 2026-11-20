@@ -2,12 +2,16 @@
 <templates id="template" xml:space="preserve">
 
     <t t-inherit="point_of_sale.PaymentScreenMethods" t-inherit-mode="extension">
+        <xpath expr="//div[hasclass('paymentmethod')]" position="attributes">
+            <attribute name="t-att-class">{'opacity-50': (this.pos.paymentTerminalInProgress and paymentMethod.use_payment_terminal) or cardMethodBlocked(paymentMethod), 'pe-none': cardMethodBlocked(paymentMethod), 'd-flex justify-content-between align-items-center': true}</attribute>
+            <attribute name="t-att-aria-disabled">cardMethodBlocked(paymentMethod)</attribute>
+        </xpath>
         <xpath expr="//div[hasclass('paymentmethods')]/t[@t-foreach]" position="before">
             <button t-if="showCardReadButton"
                 type="button"
                 class="button paymentmethod btn btn-secondary btn-lg lh-lg card-read-button"
-                t-att-class="{'is-busy': pos.paymentTerminalInProgress}"
-                t-att-disabled="pos.paymentTerminalInProgress"
+                t-att-class="{'is-busy': cardBusy}"
+                t-att-disabled="cardBusy"
                 t-on-click="readCard">
                 <span class="card-read-icon" aria-hidden="true">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"

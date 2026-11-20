@@ -5,8 +5,7 @@ import {
     isCardTerminalMethod,
     isContingencyPayment,
     resetStartedTerminalLines,
-    syncTerminalStash,
-} from "../src/js/contingency_logic.js";
+    syncTerminalStash, isCardRequestMethod } from "../src/js/contingency_logic.js";
 
 const terminal = { name: "terminal" };
 
@@ -109,4 +108,11 @@ test("contingency payments are those of unhooked or flagged methods", () => {
     assert.equal(isContingencyPayment({ id: 1 }, stash), true);
     assert.equal(isContingencyPayment({ id: 2, replaced_by_card_reader: true }, stash), true);
     assert.equal(isContingencyPayment({ id: 3 }, stash), false);
+});
+
+test("only methods that start a card request are blocked while one is pending", () => {
+    assert.equal(isCardRequestMethod({ use_payment_terminal: "transact" }), true);
+    assert.equal(isCardRequestMethod({ replaced_by_card_reader: true }), true);
+    assert.equal(isCardRequestMethod({ use_payment_terminal: false }), false);
+    assert.equal(isCardRequestMethod({}), false);
 });
