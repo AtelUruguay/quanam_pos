@@ -1,13 +1,16 @@
+import { useState } from "@odoo/owl";
 import { patch } from "@web/core/utils/patch";
 import { PaymentScreen } from "@point_of_sale/app/screens/payment_screen/payment_screen";
 import { AlertDialog, ConfirmationDialog } from "@web/core/confirmation_dialog/confirmation_dialog";
 import { _t } from "@web/core/l10n/translation";
 import { cardProviderRegistry } from "@pos_card_payment/js/card_provider_registry";
-import { isContingencyPayment } from "@pos_card_payment/js/contingency_logic";
+import { isCardRequestMethod, isContingencyPayment } from "@pos_card_payment/js/contingency_logic";
 
 patch(PaymentScreen.prototype, {
     setup() {
         super.setup(...arguments);
+        // True while a "Leer tarjeta" request (read and authorization) is in flight.
+        this.cardState = useState({ pending: false });
         // The list is computed on every render so it follows the contingency
         // mode, which can also change from other places.
         let allMethods = this.payment_methods_from_config;
@@ -59,6 +62,23 @@ patch(PaymentScreen.prototype, {
         return (
             !this.isRefundOrder && !this.cardPaymentUnavailable && !this.pos.isCardContingency
         );
+    },
+
+    /** The card buttons are off while a terminal request is in flight, so it cannot be repeated. */
+    get cardBusy() {
+        return Boolean(this.pos.paymentTerminalInProgress || this.cardState.pending);
+    },
+
+    cardMethodBlocked(paymentMethod) {
+        return this.cardState.pending && isCardRequestMethod(paymentMethod);
+    },
+
+    async addNewPaymentLine(paymentMethod) {
+        // The line "Leer tarjeta" adds itself is the only one allowed while pending.
+        if (!this._cardAddingLine && this.cardMethodBlocked(paymentMethod)) {
+            return false;
+        }
+        return super.addNewPaymentLine(...arguments);
     },
 
     get cardContingencyActive() {
@@ -119,9 +139,17 @@ patch(PaymentScreen.prototype, {
             );
             return;
         }
-        const line = await this._cardReadLine(provider);
-        if (line) {
-            await this._cardAuthorizeLine(provider, line);
+        if (this.cardState.pending) {
+            return;
+        }
+        this.cardState.pending = true;
+        try {
+            const line = await this._cardReadLine(provider);
+            if (line) {
+                await this._cardAuthorizeLine(provider, line);
+            }
+        } finally {
+            this.cardState.pending = false;
         }
     },
 
@@ -155,7 +183,14 @@ patch(PaymentScreen.prototype, {
                 });
                 return null;
             }
-            if (!(await this.addNewPaymentLine(paymentMethod))) {
+            this._cardAddingLine = true;
+            let added;
+            try {
+                added = await this.addNewPaymentLine(paymentMethod);
+            } finally {
+                this._cardAddingLine = false;
+            }
+            if (!added) {
                 return null;
             }
             const line = this.paymentLines.at(-1);

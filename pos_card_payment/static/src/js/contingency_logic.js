@@ -8,6 +8,11 @@ export function isCardTerminalMethod(pm, provider) {
     return Boolean(pm.replaced_by_card_reader || pm.use_payment_terminal === provider);
 }
 
+/** A method that starts a card request (terminal hooked, or replaced by "Leer tarjeta"). */
+export function isCardRequestMethod(pm) {
+    return Boolean(pm.use_payment_terminal || pm.replaced_by_card_reader);
+}
+
 /**
  * Unhooks (contingency on) or hooks back (contingency off) the terminal of the
  * payment methods. `stash` remembers what was unhooked; a method already
