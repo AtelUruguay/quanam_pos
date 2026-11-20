@@ -1,4 +1,4 @@
-# q_pos
+# quanam_pos
 
 Odoo 19 point of sale add-ons by Quanam. The modules are product-like: they depend
 only on Odoo standard modules, never on a specific customer.
@@ -20,12 +20,10 @@ Add this repository to the `addons_path` and install the module from Apps.
 As a git submodule (Odoo.sh or any repository that tracks it):
 
 ```bash
-git submodule add -b main https://github.com/quanam-odoo/q_pos.git SUBMODULE/q_pos
+git submodule add -b main https://github.com/AtelUruguay/quanam_pos.git SUBMODULE/quanam_pos
 ```
 
-The repository is private. On Odoo.sh, copy the deploy key shown in the project's
-**Settings → Submodules** and add it under **Settings → Deploy keys** of this
-repository, read-only.
+The repository is public, so Odoo.sh clones it over HTTPS without a deploy key.
 
 ## Running the tests
 
