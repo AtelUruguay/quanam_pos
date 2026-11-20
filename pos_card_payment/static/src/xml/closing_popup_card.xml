@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-inherit="point_of_sale.ClosePosPopup" t-inherit-mode="extension">
+        <xpath expr="(//div[@t-foreach='props.non_cash_payment_methods'])[1]" position="after">
+            <div t-if="props.card_contingency and props.card_contingency.number"
+                class="card-contingency-summary w-100 mb-3">
+                <div class="d-flex align-items-center justify-content-between fs-3 text-warning">
+                    <span>Cobros en contingencia (<t t-esc="props.card_contingency.number"/>)</span>
+                    <span t-esc="env.utils.formatCurrency(props.card_contingency.amount)"/>
+                </div>
+            </div>
+        </xpath>
+    </t>
+
+</templates>

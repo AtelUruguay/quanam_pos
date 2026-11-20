@@ -1,0 +1,175 @@
+.card-read-button {
+    --card-read-accent: var(--bs-primary, #017e84);
+    --card-read-focus: #0b57d0;
+
+    display: flex;
+    flex: 1 1 100%;
+    align-items: center;
+    gap: 0.9rem;
+    width: 100%;
+    text-align: start;
+
+    &:focus-visible {
+        outline: 3px solid var(--card-read-focus);
+        outline-offset: 2px;
+    }
+
+    &:disabled,
+    &.is-busy {
+        opacity: 0.6;
+        cursor: progress;
+    }
+
+    @media (prefers-color-scheme: dark) {
+        --card-read-focus: #8ab4f8;
+    }
+
+    .card-read-icon {
+        display: grid;
+        place-items: center;
+        flex: none;
+        width: 2.5rem;
+        height: 2.5rem;
+        color: var(--card-read-accent);
+
+        svg {
+            width: 1.9rem;
+            height: 1.9rem;
+        }
+    }
+
+    .card-read-copy {
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+        min-width: 0;
+        line-height: 1.2;
+    }
+
+    .card-read-title {
+        font-weight: 600;
+    }
+
+    small {
+        color: var(--bs-secondary-color, #6c757d);
+    }
+
+    .card-read-go {
+        flex: none;
+        font-size: 1.5rem;
+        color: var(--card-read-accent);
+    }
+}
+
+// The POS does not expose the Bootstrap CSS variables and compiles its Sass
+// once per color scheme, so the palette is derived from the Sass variables,
+// which already carry the dark mode values.
+.card-contingency-card {
+    --cc-bg: #{mix($success, $body-bg, 18%)};
+    --cc-border: #{mix($success, $body-bg, 45%)};
+    --cc-accent: #{$success};
+    --cc-on-accent: #{$white};
+    --cc-title: #{$body-color};
+    --cc-focus: #{$primary};
+
+    flex: 1 1 100%;
+    padding: 0.4rem 0.75rem;
+    border: 1px solid var(--cc-border);
+    border-radius: 0.5rem;
+    background: var(--cc-bg);
+    color: var(--cc-title);
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+
+    &.is-contingency {
+        --cc-bg: #{mix($warning, $body-bg, 22%)};
+        --cc-border: #{mix($warning, $body-bg, 55%)};
+        --cc-accent: #{$warning};
+        --cc-on-accent: #{$black};
+    }
+
+    .card-contingency-row {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        margin: 0;
+        cursor: pointer;
+    }
+
+    .card-contingency-icon {
+        display: grid;
+        place-items: center;
+        flex: none;
+        width: 1.75rem;
+        height: 1.75rem;
+        border-radius: 50%;
+        background: var(--cc-accent);
+        color: var(--cc-on-accent);
+        forced-color-adjust: none;
+
+        svg {
+            width: 1.1rem;
+            height: 1.1rem;
+        }
+    }
+
+    .card-contingency-title {
+        flex: 1 1 auto;
+        min-width: 0;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    .card-contingency-note {
+        display: block;
+        margin-top: 0.1rem;
+        padding-inline-start: 2.35rem;
+        font-size: 0.8rem;
+        color: var(--cc-title);
+        opacity: 0.85;
+    }
+
+    .form-check-input {
+        appearance: none;
+        position: relative;
+        flex: none;
+        width: 2.5rem;
+        height: 1.4rem;
+        margin: 0;
+        border: 2px solid var(--cc-accent);
+        border-radius: 1rem;
+        background: transparent;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+
+        &::after {
+            content: "";
+            position: absolute;
+            inset-block: 2px;
+            inset-inline-start: 2px;
+            aspect-ratio: 1;
+            border-radius: 50%;
+            background: var(--cc-accent);
+            transition: translate 0.2s ease, background-color 0.2s ease;
+        }
+
+        &:checked {
+            background: var(--cc-accent);
+
+            &::after {
+                translate: 1.1rem 0;
+                background: var(--cc-on-accent);
+            }
+        }
+
+        &:focus-visible {
+            outline: 3px solid var(--cc-focus);
+            outline-offset: 3px;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        &, .form-check-input, .form-check-input::after {
+            transition: none;
+        }
+    }
+}

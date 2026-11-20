@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="pos_config_form_card_payment_inherit" model="ir.ui.view">
+        <field name="name">pos.config.form.card.payment.inherit</field>
+        <field name="model">pos.config</field>
+        <field name="inherit_id" ref="point_of_sale.pos_config_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@id='title']" position="after">
+                <group string="Card payment">
+                    <field name="card_provider"/>
+                    <field name="card_allow_contingency" invisible="not card_provider"/>
+                    <field name="card_contingency_active" invisible="not card_provider"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

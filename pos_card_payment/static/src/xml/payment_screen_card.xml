@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-inherit="point_of_sale.PaymentScreenMethods" t-inherit-mode="extension">
+        <xpath expr="//div[hasclass('paymentmethods')]/t[@t-foreach]" position="before">
+            <button t-if="showCardReadButton"
+                type="button"
+                class="button paymentmethod btn btn-secondary btn-lg lh-lg card-read-button"
+                t-att-class="{'is-busy': pos.paymentTerminalInProgress}"
+                t-att-disabled="pos.paymentTerminalInProgress"
+                t-on-click="readCard">
+                <span class="card-read-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round" stroke-linejoin="round" focusable="false">
+                        <rect x="2.5" y="5" width="19" height="14" rx="2.5"/>
+                        <path d="M2.5 9.5h19"/>
+                        <path d="M6 15h4"/>
+                        <path d="M15.5 13.5a2.5 2.5 0 0 1 0 3M17.8 12.3a4.5 4.5 0 0 1 0 5.4" stroke-width="1.6"/>
+                    </svg>
+                </span>
+                <span class="card-read-copy">
+                    <span class="payment-name card-read-title">Leer tarjeta</span>
+                    <small>Acerque o inserte la tarjeta en la terminal</small>
+                </span>
+                <i class="fa fa-angle-right card-read-go" aria-hidden="true"/>
+            </button>
+            <div t-if="showCardContingencySwitch"
+                class="card-contingency-card"
+                t-att-class="{'is-contingency': cardContingencyActive}">
+                <label class="card-contingency-row" for="card-contingency-toggle">
+                    <span class="card-contingency-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                            stroke-linecap="round" stroke-linejoin="round" focusable="false">
+                            <rect x="6" y="2.5" width="12" height="19" rx="2.2"/>
+                            <rect x="8.5" y="5" width="7" height="3.6" rx="0.8"/>
+                            <path d="M9 12h.01M12 12h.01M15 12h.01M9 15h.01M12 15h.01M15 15h.01M9 18h.01M12 18h.01M15 18h.01" stroke-width="2.2"/>
+                            <path t-if="cardContingencyActive" d="M3.5 3.5l17 17" stroke-width="2.4"/>
+                        </svg>
+                    </span>
+                    <span class="card-contingency-title" id="card-contingency-status">
+                        <t t-if="cardContingencyActive">Terminal sin conexión</t>
+                        <t t-else="">Terminal con conexión</t>
+                    </span>
+                    <input id="card-contingency-toggle"
+                        class="form-check-input"
+                        type="checkbox"
+                        role="switch"
+                        aria-label="Terminal integrada"
+                        aria-describedby="card-contingency-status"
+                        t-att-checked="!cardContingencyActive"
+                        t-on-change="() => this.pos.toggleCardContingency()"/>
+                </label>
+                <small t-if="cardContingencyActive" class="card-contingency-note">Modo contingencia: tarjetas sin integración</small>
+            </div>
+        </xpath>
+    </t>
+
+</templates>
