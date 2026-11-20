@@ -51,8 +51,14 @@ patch(PaymentScreen.prototype, {
         );
     },
 
+    /**
+     * Shown even when the POS has no provider: pressing it then explains that card
+     * payments are not configured, instead of leaving the cashier without a button.
+     */
     get showCardReadButton() {
-        return this.cardActionsAvailable && !this.pos.isCardContingency;
+        return (
+            !this.isRefundOrder && !this.cardPaymentUnavailable && !this.pos.isCardContingency
+        );
     },
 
     get cardContingencyActive() {

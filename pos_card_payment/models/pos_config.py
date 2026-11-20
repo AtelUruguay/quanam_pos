@@ -11,7 +11,7 @@ class PosConfig(models.Model):
 
     card_provider = fields.Selection(
         selection='_get_card_provider_selection',
-        string='Card payment provider',
+        string='Card provider',
         help='Integration used by the "Leer tarjeta" action of this point of sale. '
              'Leave empty if the point of sale has no card integration.',
     )

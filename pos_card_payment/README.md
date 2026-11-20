@@ -7,7 +7,9 @@ one in `card_provider`.
 
 ## What the core does
 
-* "Leer tarjeta" button on the payment screen, shown only when the POS has a provider.
+* "Leer tarjeta" button on the payment screen. A POS without provider still shows it;
+  pressing it answers "No tiene configurada integración para pagos de tarjeta".
+  The contingency toggle, on the other hand, needs a provider.
 * Server entry points `pos.order.card_read` / `pos.order.card_authorize`, which
   dispatch to the provider chosen on the POS config.
 * Contingency mode (terminal without connection): toggle, payment methods flagged
