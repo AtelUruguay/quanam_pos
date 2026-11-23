@@ -79,8 +79,49 @@ cardProviderRegistry.add("myprovider", {
 });
 ```
 
-Add the file to `point_of_sale._assets_pos` in the manifest. Both hooks are
+Add the file to `point_of_sale._assets_pos` in the manifest. All hooks are
 optional, but without `authorize` the read card is never charged.
+
+#### When is the "Leer tarjeta" button shown?
+
+The core only shows it on a POS whose `card_provider` is set, and then asks **that
+provider** (never the others installed) through `isAvailable(screen)`. Implement it
+whenever your provider needs something configured on the POS to work, for example a
+terminal code or credentials: return `false` and the POS gets no button, no contingency
+toggle and no hidden "replaced by Leer tarjeta" methods. Without `isAvailable` the
+provider is considered available on every POS that selects it. Because each POS has a
+single provider, several providers with different rules can coexist.
+
+Example: a provider that needs a terminal code (a field its own module adds to
+`pos.config` and loads in the POS), in the same file where it is registered
+(`my_provider/static/src/js/my_provider_card_provider.js`):
+
+```js
+import { cardProviderRegistry } from "@pos_card_payment/js/card_provider_registry";
+
+cardProviderRegistry.add("myprovider", {
+    // No terminal code on the POS: no "Leer tarjeta" button.
+    isAvailable(screen) {
+        return Boolean(screen.pos.config.my_provider_terminal_code);
+    },
+    // ... onCardRead and authorize as above
+});
+```
+
+A second provider with another rule just registers its own key:
+
+```js
+cardProviderRegistry.add("otherprovider", {
+    // Needs both an API key and an enabled flag.
+    isAvailable(screen) {
+        const { other_api_key, other_enabled } = screen.pos.config;
+        return Boolean(other_api_key && other_enabled);
+    },
+});
+```
+
+`pos.config` loads all its fields in the POS, so any field the provider adds to it is
+readable from `screen.pos.config` without extra work.
 
 ### Extension points
 
