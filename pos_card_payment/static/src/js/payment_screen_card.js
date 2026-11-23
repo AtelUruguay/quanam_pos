@@ -54,14 +54,9 @@ patch(PaymentScreen.prototype, {
         );
     },
 
-    /**
-     * Shown even when the POS has no provider: pressing it then explains that card
-     * payments are not configured, instead of leaving the cashier without a button.
-     */
+    /** Only POS with a card provider configured get the "Leer tarjeta" button. */
     get showCardReadButton() {
-        return (
-            !this.isRefundOrder && !this.cardPaymentUnavailable && !this.pos.isCardContingency
-        );
+        return this.cardActionsAvailable && !this.pos.isCardContingency;
     },
 
     /** The card buttons are off while a terminal request is in flight, so it cannot be repeated. */
