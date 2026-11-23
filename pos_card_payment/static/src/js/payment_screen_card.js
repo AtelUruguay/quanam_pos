@@ -46,22 +46,30 @@ patch(PaymentScreen.prototype, {
         return false;
     },
 
+    /**
+     * The POS has a provider and that provider says it can work here. Each provider
+     * decides with its optional `isAvailable(screen)` (e.g. it needs a terminal code);
+     * only the provider of this POS is asked, so providers installed together do not
+     * affect each other.
+     */
+    get cardProviderAvailable() {
+        if (!this.pos.config.card_provider) {
+            return false;
+        }
+        return this.cardProvider?.isAvailable?.(this) ?? true;
+    },
+
     get cardActionsAvailable() {
         return (
-            Boolean(this.pos.config.card_provider) &&
+            this.cardProviderAvailable &&
             !this.isRefundOrder &&
             !this.cardPaymentUnavailable
         );
     },
 
-    /**
-     * Shown even when the POS has no provider: pressing it then explains that card
-     * payments are not configured, instead of leaving the cashier without a button.
-     */
+    /** The "Leer tarjeta" button needs a usable provider on this POS. */
     get showCardReadButton() {
-        return (
-            !this.isRefundOrder && !this.cardPaymentUnavailable && !this.pos.isCardContingency
-        );
+        return this.cardActionsAvailable && !this.pos.isCardContingency;
     },
 
     /** The card buttons are off while a terminal request is in flight, so it cannot be repeated. */

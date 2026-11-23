@@ -7,9 +7,8 @@ one in `card_provider`.
 
 ## What the core does
 
-* "Leer tarjeta" button on the payment screen. A POS without provider still shows it;
-  pressing it answers "No tiene configurada integración para pagos de tarjeta".
-  The contingency toggle, on the other hand, needs a provider.
+* "Leer tarjeta" button on the payment screen, only on POS with a `card_provider` whose
+  provider is usable there (see `isAvailable` below); the contingency toggle needs the same.
 * Server entry points `pos.order.card_read` / `pos.order.card_authorize`, which
   dispatch to the provider chosen on the POS config.
 * Contingency mode (terminal without connection): toggle, payment methods flagged
@@ -66,6 +65,11 @@ cardProviderRegistry.add("myprovider", {
     // Called after the card was read and its payment line added.
     onCardRead(screen, line, result) {
         line.my_token = result.provider_data?.token;
+    },
+    // Optional. Whether this provider can work on the POS of the screen (e.g. it needs
+    // a terminal code). Decides the "Leer tarjeta" button; default: available.
+    isAvailable(screen) {
+        return Boolean(screen.pos.config.my_provider_terminal);
     },
     // Charges the line. If it throws, the cashier is told to check the terminal;
     // contingency is not offered for a failed charge.
