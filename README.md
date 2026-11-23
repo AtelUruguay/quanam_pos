@@ -12,6 +12,8 @@ only on Odoo standard modules, never on a specific customer.
 `pos_card_payment` talks to no card provider. Each integration (for example a
 terminal vendor's SOAP or REST service) is a small separate module that registers
 itself in the core. See [Adding a provider](pos_card_payment/README.md#adding-a-provider).
+Each provider also decides when the "Leer tarjeta" button is shown on a POS (its
+`isAvailable` hook, see [the rule](pos_card_payment/README.md#when-is-the-leer-tarjeta-button-shown)).
 
 ## Installing
 

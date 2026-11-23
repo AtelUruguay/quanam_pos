@@ -79,8 +79,18 @@ cardProviderRegistry.add("myprovider", {
 });
 ```
 
-Add the file to `point_of_sale._assets_pos` in the manifest. Both hooks are
+Add the file to `point_of_sale._assets_pos` in the manifest. All hooks are
 optional, but without `authorize` the read card is never charged.
+
+#### When is the "Leer tarjeta" button shown?
+
+The core only shows it on a POS whose `card_provider` is set, and then asks **that
+provider** (never the others installed) through `isAvailable(screen)`. Implement it
+whenever your provider needs something configured on the POS to work, for example a
+terminal code or credentials: return `false` and the POS gets no button, no contingency
+toggle and no hidden "replaced by Leer tarjeta" methods. Without `isAvailable` the
+provider is considered available on every POS that selects it. Because each POS has a
+single provider, several providers with different rules can coexist.
 
 ### Extension points
 
