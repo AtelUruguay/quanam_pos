@@ -46,15 +46,28 @@ patch(PaymentScreen.prototype, {
         return false;
     },
 
+    /**
+     * The POS has a provider and that provider says it can work here. Each provider
+     * decides with its optional `isAvailable(screen)` (e.g. it needs a terminal code);
+     * only the provider of this POS is asked, so providers installed together do not
+     * affect each other.
+     */
+    get cardProviderAvailable() {
+        if (!this.pos.config.card_provider) {
+            return false;
+        }
+        return this.cardProvider?.isAvailable?.(this) ?? true;
+    },
+
     get cardActionsAvailable() {
         return (
-            Boolean(this.pos.config.card_provider) &&
+            this.cardProviderAvailable &&
             !this.isRefundOrder &&
             !this.cardPaymentUnavailable
         );
     },
 
-    /** Only POS with a card provider configured get the "Leer tarjeta" button. */
+    /** The "Leer tarjeta" button needs a usable provider on this POS. */
     get showCardReadButton() {
         return this.cardActionsAvailable && !this.pos.isCardContingency;
     },
